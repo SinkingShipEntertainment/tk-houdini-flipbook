@@ -236,24 +236,38 @@ class FlipbookDialog(QtWidgets.QDialog):
                 operation.updateLongProgress(
                     0.35, "Converting image-sequence, please sit tight."
                 )
-                self.app.logger.debug(">> Converting image-sequence using ffmpeg...")
-                self.app.logger.debug(">> Saving to output path -> {}".format(outputPath))
-                
-                submit.convert_sequence(outputPath["inputTempFile"], outputPath["finFile"])
-
-                operation.updateLongProgress(0.5, "Uploading to Shotgun")
-                self.app.logger.debug(">> Uploading to Shotgun...")
-                # submit.submit_version()
-                submit.submit_version()
+                m = ">> Converting image-sequence using ffmpeg..."
+                self.app.logger.debug(m)
+                self.app.logger.debug(">> Saving to output path -> {}".format(
+                                        outputPath))
+                # converting mov sequence
+                submit.convert_sequence(
+                        outputPath["inputTempFile"],
+                        outputPath["finFile"])
                 operation.updateLongProgress(0.75, "Saving")
                 self.app.logger.debug(">> Saving...")
-                # self.saveNewVersion()
                 self.saveNewVersion()
                 operation.updateLongProgress(1, "Done, closing window.")
                 self.closeWindow()
-                self.app.logger.info("Flipbook successful")
-                hou.ui.displayMessage("Flipbook successful!")
-
+            # submit/upload version confirmation
+            text_confirm = "Upload as Version to Shotgun?"
+            upload_confirmed = hou.ui.displayMessage(
+                        text_confirm,
+                        buttons=('Not now', 'Ok',),
+                        severity=hou.severityType.ImportantMessage,
+                        default_choice=1,
+                        close_choice=-1,
+                        help="",
+                        title="SG Version",
+                        details="",
+                        details_label="",
+                        details_expanded=False)
+            if (upload_confirmed):
+                # operation.updateLongProgress(0.5, "Uploading to Shotgun")
+                self.app.logger.debug(">> Uploading to Shotgun...")
+                submit.submit_version()
+            self.app.logger.info("Done! Flipbook successful")
+            hou.ui.displayMessage("Done! Flipbook successful!")                
         except Exception as e:
             self.app.logger.error("Oops, something went wrong!")
             self.app.logger.error(e)
