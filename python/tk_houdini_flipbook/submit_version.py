@@ -50,7 +50,8 @@ class SubmitVersion(object):
             os.makedirs(path, 0o700)
         # saving mov in the path from SG templates
         try:
-            command = "ffmpeg -y -r 24 -f image2 -s 1920x1080 -i {image_seq} -vcodec libx264 -crf 25 -pix_fmt yuv420p {output}".format(
+            command = "ffmpeg -y -r 24 -f image2 -start_number {f_start} -s 1920x1080 -i {image_seq} -vcodec libx264 -crf 25 -pix_fmt yuv420p {output}".format(
+                f_start=self.frameRange[0],
                 image_seq=tmpSequence,
                 output=movFile)
             subprocess.call(command, shell=True)
