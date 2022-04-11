@@ -245,8 +245,6 @@ class FlipbookDialog(QtWidgets.QDialog):
                         outputPath["inputTempFile"],
                         outputPath["finFile"])
                 operation.updateLongProgress(0.75, "Saving")
-                self.app.logger.debug(">> Saving...")
-                self.saveNewVersion()
                 operation.updateLongProgress(1, "Done, closing window.")
                 self.closeWindow()
             # submit/upload version confirmation
@@ -265,6 +263,9 @@ class FlipbookDialog(QtWidgets.QDialog):
             if (upload_confirmed):
                 # operation.updateLongProgress(0.5, "Uploading to Shotgun")
                 self.app.logger.debug(">> Uploading to Shotgun...")
+                # up-res version only for confirmed versions.
+                self.app.logger.debug(">> Saving...")
+                self.saveNewVersion()
                 submit.submit_version()
             self.app.logger.info("Done! Flipbook successful")
             hou.ui.displayMessage("Done! Flipbook successful!")                
